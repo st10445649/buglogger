@@ -1,9 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+COPY ["BugLoggerApi/BugLoggerApi.csproj", "BugLoggerApi/"]
+RUN dotnet restore "BugLoggerApi/BugLoggerApi.csproj"
+
+# Copy everything from the root into /src
 COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app/publish
+WORKDIR "/src/BugLoggerApi"
+RUN dotnet publish "BugLoggerApi.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
